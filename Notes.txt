@@ -1,3 +1,8 @@
 Python Online Debugger :
 
 https://www.onlinegdb.com/online_python_debugger
+
+
+List starts with []
+tuples starts with () and it is immuteable which once the value is assigned it cannot be changed
+set starts with {}
