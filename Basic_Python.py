@@ -23,3 +23,13 @@ for i in range(1,Usr_inpt+1):
     list_x.append(Shopping_Items)
     
 print(list_x
+
+      
+      #############################################################
+      
+      food=["Mango","Banana","Apple"]
+
+for f in food:
+    print("The lenth of {} is".format(f),len(f))
+    
+print("Total items in list are :",len(food))
