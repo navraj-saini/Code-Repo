@@ -1,0 +1,105 @@
+
+
+<source> 
+  type sudo_tail
+  path /var/log/iptables.log 
+  pos_file /var/log/iptables.pos  
+  read_from_head true  
+  run_interval 60   
+  tag oms.api.iptable   
+  format /^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) kernel: IPTables Packet (?<action>[^ ]*): IN=(?<in>[^ ]*) OUT=(?<out>[^ ]*) MAC=(?<mac>[^ ]*) SRC=(?<sourceIP>[^ ]*) DST=(?<destIP>[^ ]*) LEN=(?<length>[^ ]*)[^ ]* TOS=(?<tos>[^ ]*) PREC=(?<prec>[^ ]*) TTL=(?<ttl>[^ ]*) ID=(?<id>[^ ]*)[^ ]* (?<df>[^ ]*) PROTO=(?<proto>[^ ]*) SPT=(?<spt>[^ ]*) DPT=(?<dpt>[^ ]*) WINDOW=(?<window>[^ ]*) RES=(?<res>[^ ]*) (?<misc>.*)/ 
+  time_format %b %d %H:%M:%S
+  </source>
+
+  <match oms.api.iptable>   
+  type out_oms_api   
+  log_level info   
+  buffer_chunk_limit 5m   
+  buffer_type file   
+  buffer_path /var/opt/microsoft/omsagent/<workspace id>/state/out_oms_api_iptable*.buffer  
+  buffer_queue_limit 10   
+  flush_interval 20s   
+  retry_limit 10   
+  retry_wait 30s </match>
+  
+  ***************************************************************************************************
+  
+  https://regexr.com/
+https://www.codeproject.com/Tips/752372/Parsing-a-Key-Value-pair-with-a-Regular-Expression
+https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-data-sources-custom-logs
+https://docs.fluentd.org/v0.12/articles/in_tail
+
+******************************************************************************************************
+
+Configure the Nmap logs by parsing the regular expression along with the time stamp  so as to sync with OMS log pattern. 
+For debugging the expression use Fluentd filter parser or Fluentular.
+For more details on the same, please refer to the backlog B-46281 egate_cookbook/files/default/oms_iptables.conf
+
+
+Create a custom configuration file under /etc/opt/microsoft/omsagent//conf/omsagent.d/
+Ex: /etc/opt/microsoft/omsagent/0XXXX-XXX/conf/omsagent.d/mediawiki_log.conf.
+Create a custom conf file for each individual custom log file.
+
+type sudo_tail
+path /var/log/httpd/mediawiki.log
+pos_file /var/log/httpd/mediawiki.pos
+read_from_head true
+run_interval 60
+tag oms.api.medaiwiki
+format none
+
+
+type out_oms_api
+log_level info
+buffer_chunk_limit 5m
+buffer_type file
+buffer_path /var/opt/microsoft/omsagent//state/out_oms_api_nmap*.buffer
+buffer_queue_limit 10
+flush_interval 20s
+retry_limit 10
+retry_wait 30s
+Change the file permission 
+sudo chown omsagent:omiusers /etc/opt/microsoft/omsagent/0XXXX-XXX/conf/omsagent.d/mediawiki_log.conf
+
+
+**************************
+
+https://docs.fluentd.org/v0.12/articles/filter_grep#<regexp>-directive-(optional)
+https://github.com/tomas-zemres/fluent-plugin-fields-parser
+
+
+<source>
+  type sudo_tail
+  path /var/log/audit/audit.log
+  pos_file /var/opt/microsoft/omsagent/state/var_log_audit_audit_log.pos
+  read_from_head true
+  run_interval 5s
+  format parser_auditlog
+  tag oms.api.LinuxAuditLog.Timestamp
+</source>
+
+# use grep plugin to filter the output
+# http://docs.fluentd.org/articles/filter_grep
+#<filter oms.api.LinuxAuditLog.**>
+#  type grep
+#</filter>
+
+<match oms.api.LinuxAuditLog.**>
+  type out_oms_api
+  log_level info
+
+  buffer_chunk_limit 5m
+  buffer_type file
+  buffer_path /var/opt/microsoft/omsagent/state/var_log_audit_audit_log*.buffer
+  buffer_queue_limit 10
+  flush_interval 20s
+  retry_limit 10
+  retry_wait 5s
+  max_retry_wait 5m
+
+  compress true
+</match>
+
+#<match **>
+#  type stdout
+#</match>
