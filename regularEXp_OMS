@@ -1,0 +1,12 @@
+Host\s:\s(?<host_name>\d{2,3}\.\d{2,3}\.\d{1,3}\.\d{1,3}\s\([\w\.]+\)),(?<dest_dns>DNS\s:\s\-),State\s:\s(?<host_state>up|down),SourceIP\s:\s(?<source_ip>\d{2,3}\.\d{2,3}\.\d{1,3}\.\d{1,3}),Protocol\s:\s(?<src_protocol>[a-z]{3,10}),port\s:\s(?<dest_port>[\d]{3,8}),state\s:\s(?<port_state>open|closed|fileterd),service\s:\s(?<service_running>[a-z]{3,10}),reason\s:(?<s_reason>syn\-ack|reset),product\s:\s(?<s_product>Apache\shttpd|),current-timestamp\s:\s(?<Time_stamp>\d{4}\-\d{2}\-\d{2}\s\d{2}\:\d{2}\:\d{2})|(?<Error_Message>\(\'\d{2,3}\.\d{2,3}\.\d{1,3}\.\d{1,3}\',\s\'Nmap scan terminated: Network connection abort\'\))
+
+
+
+
+Scannning for system: 192.168.5.21, range: 1-1024
+
+Host : 192.168.9.21 (mwiki960000000.daa.local),DNS : -,State : up,SourceIP : 192.168.122.1,Protocol : tcp,port : 443,state : open,service : http,reason :syn-ack,product : Apache httpd,current-timestamp : 2017-11-30 00:04:09
+
+('192.168.1.142', 'Nmap scan terminated: Network connection abort')
+
+Scannning for system: 192.168.5.21, range: 1-1024
