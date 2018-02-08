@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 this is a new file is this repo 
+=======
+the new content needs to be added to the file 
+>>>>>>> newbranch
